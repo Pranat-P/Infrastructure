@@ -1,0 +1,124 @@
+name: AWS
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/aws.yaml"
+      - "terraform/aws/**"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/aws.yaml"
+      - "terraform/aws/**"
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: "ap-south-1"
+  S3_BUCKET: "psp-tfstate"
+  TF_VERSION: "1.6.6"
+  TF_PATH: "/usr/local/bin/terraform"
+  TG_VERSION: "0.83.2"
+#  TERRAGRUNT_PROVIDER_CACHE: 1
+#  TERRAGRUNT_PROVIDER_CACHE_DIR: "/gha-cache/.terraform.d/plugin-cache"
+  TG_TF_FORWARD_STDOUT: "true"
+  TG_NON_INTERACTIVE: "true"
+  MODULES: "iam-policy"
+
+jobs:
+  infrastructure:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: "terraform/aws"
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Find Current PR
+        uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+        with:
+          state: all
+          github-token: ${{ secrets.GIT_TOKEN }}
+
+      - name: Setup Terraform Environment
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: Setup Terragrunt Environment
+        uses: gruntwork-io/terragrunt-action@v3
+        with:
+          tg_version: ${{ env.TG_VERSION }}
+          tf_path: ${{ env.TF_PATH }}
+
+      - name: Validate Terragrunt Files
+        run: terragrunt hclfmt --check --diff
+
+      - name: Initialize Terragrunt Modules
+        run: terragrunt init --all
+
+      - name: Validate Terraform Files
+        run: terraform fmt -check -recursive -diff
+
+      - name: Validate Terragrunt Modules
+        run: terragrunt validate --all
+
+      - name: Plan Terragrunt Modules
+        if: github.event_name == 'pull_request'
+        env:
+          PR: ${{ steps.findPr.outputs.number }}
+        run: |
+          terragrunt plan --all -out=tf-plan --no-color 2>&1 | tee terraform-plan
+          IFS=',' read -r -a modules <<< "${{ env.MODULES }}"
+          for module in "${modules[@]}"; do
+            aws s3 cp "./$module/tf-plan" s3://${{ env.S3_BUCKET }}/tf-plans/$PR/$module
+          done
+          sed -i '1 i\```hcl' terraform-plan && sed -i '$a```' terraform-plan
+
+      - name: Apply Terragrunt Modules
+        if: github.ref == 'refs/heads/main'
+        env:
+          PR: ${{ steps.findPr.outputs.number }}
+        run: |
+          # Get Plan from backend
+          IFS=',' read -r -a modules <<< "${{ env.MODULES }}"
+          for module in "${modules[@]}"; do
+            aws s3 cp s3://${{ env.S3_BUCKET }}/tf-plans/$PR/$module "./$module/tf-plan"
+          done
+          # Apply Terragrunt Modules
+          terragrunt apply --all tf-plan
+          # Cleanup S3 Plan Files
+          aws s3 rm s3://${{ env.S3_BUCKET }}/tf-plans/$PR --recursive
+
+      - name: Upload Kubeconfig to S3
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if [ -d "./eks/kubeconfigs" ]; then
+            aws s3 cp ./eks/kubeconfigs s3://${{ env.S3_BUCKET }}/kubeconfigs/ --recursive
+          else
+            echo "No kubeconfigs directory found. Skipping upload."
+          fi
+
+      # - name: remove override.tf file
+      #   if: github.ref == 'refs/heads/main'
+      #   run: rm -rf ./s3/backend_override.tf
+
+      # - name: re-run init for applt tf state on S3
+      #   if: github.ref == 'refs/heads/main'
+      #   run: terraform -chdir=./s3 init -migrate-state -force-copy
+
+      - name: Comment on PR with Plan Output
+        uses: thollander/actions-comment-pull-request@v3
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GIT_TOKEN }}
+          comment-tag: file
+          file-path: ./terraform/aws/terraform-plan
+          mode: recreate
+          create-if-not-exists: true
