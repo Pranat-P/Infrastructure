@@ -1,4 +1,4 @@
-bucket_name        = "tfstate"
+bucket_name        = "1-tfstate"
 backup_bucket_name = "1-backup"
 default_tags = {
   Owner       = "terraform"
