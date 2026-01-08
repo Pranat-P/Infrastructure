@@ -24,7 +24,7 @@ env:
 #  TERRAGRUNT_PROVIDER_CACHE_DIR: "/gha-cache/.terraform.d/plugin-cache"
   TG_TF_FORWARD_STDOUT: "true"
   TG_NON_INTERACTIVE: "true"
-  MODULES: "iam-policy,iam-user"
+  MODULES: "iam,iam-policy,iam-user"
 
 jobs:
   infrastructure:
@@ -58,7 +58,7 @@ jobs:
           tf_path: ${{ env.TF_PATH }}
 
       - name: Validate Terragrunt Files
-        run: terragrunt hclfmt --check --diff
+        run: terragrunt hcl format --check --diff
 
       - name: Initialize Terragrunt Modules
         run: terragrunt init --all
