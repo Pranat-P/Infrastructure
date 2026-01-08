@@ -23,7 +23,7 @@ generate "backend" {
   contents  = <<EOF
 terraform {
   backend "s3" {
-    bucket = "psp-tfstate"
+    bucket = "psp-1-tfstate"
     key    = "tf-states/${path_relative_to_include()}/terraform.tfstate"
     region = "ap-south-1"
   }
