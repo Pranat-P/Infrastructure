@@ -24,7 +24,7 @@ env:
 #  TERRAGRUNT_PROVIDER_CACHE_DIR: "/gha-cache/.terraform.d/plugin-cache"
   TG_TF_FORWARD_STDOUT: "true"
   TG_NON_INTERACTIVE: "true"
-  MODULES: "ecr,iam,iam-policy,iam-user,s3"
+  MODULES: "ecr,iam,eventbridge,iam-policy,iam-user,s3"
 
 jobs:
   infrastructure:
