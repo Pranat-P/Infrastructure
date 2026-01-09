@@ -16,7 +16,7 @@ medvista_runner = {
     runner = {
       desired_size                 = 0
       min_size                     = 0
-      max_size                     = 1
+      max_size                     = 2
       instance_types               = ["m7i.xlarge"]
       capacity_type                = "ON_DEMAND"
       labels                       = { "role" = "runner" }
