@@ -14,8 +14,8 @@ medvista_runner = {
       iam_role_additional_policies = { "policy_arn" = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy" }
     },
     runner = {
-      desired_size                 = 0
-      min_size                     = 0
+      desired_size                 = 1
+      min_size                     = 1
       max_size                     = 1
       instance_types               = ["m7i.xlarge"]
       capacity_type                = "ON_DEMAND"
