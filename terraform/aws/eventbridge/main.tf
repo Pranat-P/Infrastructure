@@ -43,7 +43,7 @@ resource "aws_iam_policy" "iam_policy" {
           "events:InvokeApiDestination"
         ],
         "Resource" : [
-          "arn:aws:events:ap-south-1:793587621338:api-destination/*"
+          "arn:aws:events:ap-south-1:587210147621:api-destination/*"
         ]
       }
     ]
