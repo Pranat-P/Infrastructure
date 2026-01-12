@@ -1,5 +1,5 @@
-resource_name                    = "ecr-image-push-event"
-authorization_type               = "NONE"
+resource_name      = "ecr-image-push-event"
+authorization_type = "NONE"
 # api_key_name                     = "x-api-key"
 # api_key_value                    = "b8a38e35b1d321fbbef5d7f0ad4358420e922334"
 http_method                      = "POST"
