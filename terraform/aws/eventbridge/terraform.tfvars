@@ -1,7 +1,7 @@
-resource_name      = "ecr-image-push-event"
-authorization_type = "NONE"
-# api_key_name                     = "x-api-key"
-# api_key_value                    = "b8a38e35b1d321fbbef5d7f0ad4358420e922334"
+resource_name                    = "ecr-image-push-event"
+authorization_type               = "NONE"
+api_key_name                     = "x-api-key"
+api_key_value                    = "b8a38e35b1d321fbbef5d7f0ad4358420e922334"
 http_method                      = "POST"
 invocation_rate_limit_per_second = 10
 maximum_event_age_in_seconds     = 60
