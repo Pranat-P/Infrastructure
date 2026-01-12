@@ -8,6 +8,6 @@ maximum_event_age_in_seconds     = 60
 maximum_retry_attempts           = 0
 endpoint_hostname                = "https://cd-release.pranat.online"
 repo_info = {
-  "hellow" = "/hook/5b0102e921d3184378e872cf57ec2a2a713ec371734114826f7b5a7a46b88531"
+  "hellow" = "/hook/26c081fdbc55d8da8cd49e009298608a5dc33ba1e2034a8453f7aef5931e8a29"
   "new"    = "/hook/0753799763e410428c26ceb18c2e2f8c7ef1d572393d2100ee63a1c3757bda79"
 }
