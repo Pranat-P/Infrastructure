@@ -93,7 +93,7 @@ resource "kubernetes_cluster_role_binding_v1" "k8s_role_binding" {
   }
 }
 
-resource "kubernetes_secret" "k8s_secret" {
+resource "kubernetes_secret_v1" "k8s_secret" {
   provider = kubernetes.k8s
 
   metadata {
@@ -108,12 +108,12 @@ resource "kubernetes_secret" "k8s_secret" {
   type = "kubernetes.io/service-account-token"
 }
 
-data "kubernetes_secret" "k8s_secret_data" {
+data "kubernetes_secret_v1" "k8s_secret_data" {
   provider = kubernetes.k8s
 
   metadata {
-    name      = kubernetes_secret.k8s_secret.metadata[0].name
-    namespace = kubernetes_secret.k8s_secret.metadata[0].namespace
+    name      = kubernetes_secret_v1.k8s_secret.metadata[0].name
+    namespace = kubernetes_secret_v1.k8s_secret.metadata[0].namespace
   }
 }
 
@@ -137,6 +137,6 @@ preferences: {}
 users:
 - name: ${var.cluster_name}
   user:
-    token: ${data.kubernetes_secret.k8s_secret_data.data.token}
+    token: ${data.kubernetes_secret_v1.k8s_secret_data.data.token}
 KUBECONFIG
 }
