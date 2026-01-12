@@ -1,7 +1,7 @@
 eks_clusters = [
   {
     cluster_name                             = "medvistacloud"
-    cluster_version                          = "1.33"
+    cluster_version                          = "1.34"
     cluster_endpoint_public_access           = true
     enable_cluster_creator_admin_permissions = true
     desired_size                             = 1
