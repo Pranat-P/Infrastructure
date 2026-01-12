@@ -62,7 +62,7 @@ provider "kubernetes" {
   }
 }
 
-resource "kubernetes_service_account" "k8s_service_account" {
+resource "kubernetes_service_account_v1" "k8s_service_account" {
   provider = kubernetes.k8s
 
   metadata {
@@ -73,11 +73,11 @@ resource "kubernetes_service_account" "k8s_service_account" {
   automount_service_account_token = false
 }
 
-resource "kubernetes_cluster_role_binding" "k8s_role_binding" {
+resource "kubernetes_cluster_role_binding_v1" "k8s_role_binding" {
   provider = kubernetes.k8s
 
   metadata {
-    name = kubernetes_service_account.k8s_service_account.metadata[0].name
+    name = kubernetes_service_account_v1.k8s_service_account.metadata[0].name
   }
 
   role_ref {
@@ -88,32 +88,32 @@ resource "kubernetes_cluster_role_binding" "k8s_role_binding" {
 
   subject {
     kind      = "ServiceAccount"
-    name      = kubernetes_service_account.k8s_service_account.metadata[0].name
-    namespace = kubernetes_service_account.k8s_service_account.metadata[0].namespace
+    name      = kubernetes_service_account_v1.k8s_service_account.metadata[0].name
+    namespace = kubernetes_service_account_v1.k8s_service_account.metadata[0].namespace
   }
 }
 
-resource "kubernetes_secret" "k8s_secret" {
+resource "kubernetes_secret_v1" "k8s_secret" {
   provider = kubernetes.k8s
 
   metadata {
-    name      = kubernetes_service_account.k8s_service_account.metadata[0].name
-    namespace = kubernetes_service_account.k8s_service_account.metadata[0].namespace
+    name      = kubernetes_service_account_v1.k8s_service_account.metadata[0].name
+    namespace = kubernetes_service_account_v1.k8s_service_account.metadata[0].namespace
     annotations = {
-      "kubernetes.io/service-account.name"      = kubernetes_service_account.k8s_service_account.metadata[0].name
-      "kubernetes.io/service-account.namespace" = kubernetes_service_account.k8s_service_account.metadata[0].namespace
+      "kubernetes.io/service-account.name"      = kubernetes_service_account_v1.k8s_service_account.metadata[0].name
+      "kubernetes.io/service-account.namespace" = kubernetes_service_account_v1.k8s_service_account.metadata[0].namespace
     }
   }
 
   type = "kubernetes.io/service-account-token"
 }
 
-data "kubernetes_secret" "k8s_secret_data" {
+data "kubernetes_secret_v1" "k8s_secret_data" {
   provider = kubernetes.k8s
 
   metadata {
-    name      = kubernetes_secret.k8s_secret.metadata[0].name
-    namespace = kubernetes_secret.k8s_secret.metadata[0].namespace
+    name      = kubernetes_secret_v1.k8s_secret.metadata[0].name
+    namespace = kubernetes_secret_v1.k8s_secret.metadata[0].namespace
   }
 }
 
@@ -137,6 +137,6 @@ preferences: {}
 users:
 - name: ${var.cluster_name}
   user:
-    token: ${data.kubernetes_secret.k8s_secret_data.data.token}
+    token: ${data.kubernetes_secret_v1.k8s_secret_data.data.token}
 KUBECONFIG
 }
