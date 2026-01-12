@@ -73,7 +73,7 @@ resource "kubernetes_service_account_v1" "k8s_service_account" {
   automount_service_account_token = false
 }
 
-resource "kubernetes_cluster_role_binding" "k8s_role_binding" {
+resource "kubernetes_cluster_role_binding_v1" "k8s_role_binding" {
   provider = kubernetes.k8s
 
   metadata {
