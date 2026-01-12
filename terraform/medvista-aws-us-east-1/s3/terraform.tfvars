@@ -1,4 +1,3 @@
-
 buckets = [
   {
     prefix     = "medvistacloud"
@@ -10,16 +9,6 @@ buckets = [
     name       = "backup"
     create_iam = true
   }
-#   {
-#     prefix     = "mykarecloud"
-#     name       = "qa-document"
-#     create_iam = true
-#   },
-#   {
-#     prefix     = "mykarecloud-qa"
-#     name       = "qa-backup"
-#     create_iam = true
-#   }
 ]
 
 default_tags = {
