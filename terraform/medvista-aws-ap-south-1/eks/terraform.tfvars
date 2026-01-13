@@ -31,7 +31,7 @@ medvista_runner = {
     }
   }
   service_account_name                   = "devops-admin"
-  cloudwatch_log_group_retention_in_days = 5
+  cloudwatch_log_group_retention_in_days = null
   tags = {
     Owner       = "terraform"
     Project     = "Medvista"
