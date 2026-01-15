@@ -1,7 +1,8 @@
 # Repositoty names to be added in alphabatical order
 repository_names = [
   "hellow",
-  "new"
+  "new",
+  "healthcare_identityservice"
 ]
 
 attach_repository_policy = false
